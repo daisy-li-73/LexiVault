@@ -5,6 +5,11 @@ import sys
 args = sys.argv
 filename = args[1]
 
+# Create output file with word transcriptions
+newFilename = filename+".out"
+newFile = open(newFilename, "w")
+
+# Set variables for phonemize
 backend='espeak'
 if "eng" in filename:
     language = "en-us" 
@@ -30,8 +35,21 @@ with open(filename, "r") as file:
             lemmas.append(tokens[3])
 
 # Create transcriptions for word list and lemma list 
-words_trans = phonemize(words, language, backend)
-lemmas_trans = phonemize(lemmas, language, backend)
+    words_trans = phonemize(words, language, backend)
+    lemmas_trans = phonemize(lemmas, language, backend)
 
-print(words_trans)
-print(lemmas_trans)
+# TODO: Add word transcriptions to input file
+    for i in range(len(lines)):
+        line = lines[i]
+        tokens = line.split("\t")
+        newFile.write(tokens[0]+"\t") # write word to new file
+        if (i == 0): # Write headers
+            newFile.write("transcription\t")
+        else:
+        # Write word's transcription in second column
+            newFile.write(words_trans[i-1]+"\t") 
+        # Write rest of columns to file 
+        for j in range(1, len(tokens)):
+            newFile.write(tokens[j])
+            if j != len(tokens)-1:
+                newFile.write("\t")
